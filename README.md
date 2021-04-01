@@ -8,7 +8,7 @@
 [DDI](https://drive.google.com/file/d/1f03yS_hTY5-lGR4N9siDYjalAeZrler8/view?usp=sharing)\
 [ChemProt](https://drive.google.com/file/d/1KitpphP5B9wKN01NoiKg65z11vckeoka/view?usp=sharing)
 
-Due to the memory limit, we split the pre-training data into 10 files during sub-domain pre-training. If enough memory is available for you, just combine all the files into one file. Also, before pre-training, we need to covert the text data into tfrecord file for the BERT model using the following code, here we use PPI as an example. For pre-training of BioBERT model, we have to set "do_lower_case" to "false" and "do_whole_word_mask" to "false", and for PubMedBERT,  we have to set "do_lower_case" and "do_whole_word_mask" to "true".
+Due to the memory limit, we split the pre-training data into 10 files during sub-domain pre-training. If enough memory is available for you, just combine all the files into one file. Also, before pre-training, we need to covert the text data into tfrecord file for the BERT model using the following code, here we use PPI as an example. For pre-training of BioBERT model, we have to set "do_lower_case" to "false" and "do_whole_word_mask" to "false", and for PubMedBERT,  we have to set both "do_lower_case" and "do_whole_word_mask" to "true".
 
 ```
 for i in {1..10}
@@ -34,11 +34,13 @@ do
 done
 ```
 
-After the pre-training, we then can fine-tuning the BERT model on the evaluation sets of PPI, DDI and ChemProt:
-$TASK_NAME='aimed' or 'ddi13' or 'chemprot';
-$BERT_DIR is the path where we store the pre-trained BERT model using sub-domain data;
+After the pre-training, we then can fine-tune the BERT model on the evaluation sets of PPI, DDI and ChemProt:\
+$TASK_NAME='aimed' or 'ddi13' or 'chemprot';\
+$BERT_DIR is the path where we store the pre-trained BERT model using sub-domain data;\
 $OUTPUT_DIR is the path where we can store the fine-tuned BERT model;
 ```
 python run_re.py --task_name=$TASK_NAME --do_train=true --do_eval=false --do_predict=true --vocab_file=$BIOBERT_DIR/vocab.txt --bert_config_file=$BERT_DIR/bert_config.json --init_checkpoint=$BERT_DIR/model.ckpt-10000 --max_seq_length=128 --train_batch_size=16 --learning_rate=2e-5 --num_train_epochs=${s} --do_lower_case=false --data_dir=${RE_DIR}${i} --output_dir=${OUTPUT_DIR}${i} 
 
 ```
+
+For the new fine-tuning mechanism of BERT model, just set ""
