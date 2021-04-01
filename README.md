@@ -42,22 +42,28 @@ $OUTPUT_DIR is the path where we can store the fine-tuned BERT model;
 ```
 TASK_NAME="aimed"
 RE_DIR="./REdata/aimed/"
-BIOBERT_DIR="./pubmedbert_chemprot"
-OUTPUT_DIR="./REoutput/aimed_pubmedbert_att_ll_chemprot"
+BERT_DIR="./pubmedbert_gene"
+OUTPUT_DIR="./REoutput/aimed_pubmedbert_gene"
+s=10
 for i in {1..10}
 do
-	python run_re.py --task_name=$TASK_NAME --do_train=true --do_eval=false --do_predict=true --vocab_file=$BIOBERT_DIR/vocab.txt --bert_config_file=$BERT_DIR/bert_config.json --init_checkpoint=$BERT_DIR/model.ckpt-10000 --max_seq_length=128 --train_batch_size=16 --learning_rate=2e-5 --num_train_epochs=${s} --do_lower_case=false --data_dir=${RE_DIR}${i} --output_dir=${OUTPUT_DIR}${i} 
+	python run_re.py --task_name=$TASK_NAME --do_train=true --do_eval=false --do_predict=true --vocab_file=$BERT_DIR/vocab.txt --bert_config_file=$BERT_DIR/bert_config.json --init_checkpoint=$BERT_DIR/model.ckpt-10000 --max_seq_length=128 --train_batch_size=16 --learning_rate=2e-5 --num_train_epochs=${s} --do_lower_case=false --data_dir=${RE_DIR}${i} --output_dir=${OUTPUT_DIR}${i} 
 done
-python ./biocodes/re_eval.py --output_path=${OUTPUT_DIR} --answer_path=${RE_DIR} --fold_number=10 --step=${s} --task_name="result_file"
+python ./biocodes/re_eval.py --output_path=${OUTPUT_DIR} --answer_path=${RE_DIR} --fold_number=10 --step=${s} --task_name="aimed_pubmedbert_gene"
 ```
 
 For the new fine-tuning mechanism of BERT model, just set "model_name" to "attention_last_layer" or "bilstm_last_layer" or ""lstm_last_layer""
 ```
+TASK_NAME="aimed"
+RE_DIR="./REdata/aimed/"
+BERT_DIR="./pubmedbert_gene"
+OUTPUT_DIR="./REoutput/aimed_pubmedbert_gene_att_ll"
+s=10
 for i in {1..10}
 do
-	python run_re.py --task_name=$TASK_NAME --do_train=true --do_eval=false --do_predict=true --vocab_file=$BIOBERT_DIR/vocab.txt --bert_config_file=$BIOBERT_DIR/bert_config.json --init_checkpoint=$BIOBERT_DIR/model.ckpt-10000 --max_seq_length=128 --train_batch_size=16 --learning_rate=2e-5 --num_train_epochs=${s} --do_lower_case=false --data_dir=${RE_DIR}${i} --output_dir=${OUTPUT_DIR}${i} --model_name="attention_last_layer"
+	python run_re.py --task_name=$TASK_NAME --do_train=true --do_eval=false --do_predict=true --vocab_file=$BERT_DIR/vocab.txt --bert_config_file=$BERT_DIR/bert_config.json --init_checkpoint=$BERT_DIR/model.ckpt-10000 --max_seq_length=128 --train_batch_size=16 --learning_rate=2e-5 --num_train_epochs=${s} --do_lower_case=false --data_dir=${RE_DIR}${i} --output_dir=${OUTPUT_DIR}${i} --model_name="attention_last_layer"
 done
-python ./biocodes/re_eval.py --output_path=${OUTPUT_DIR} --answer_path=${RE_DIR} --fold_number=10 --step=${s} --task_name="result_file"
+python ./biocodes/re_eval.py --output_path=${OUTPUT_DIR} --answer_path=${RE_DIR} --fold_number=10 --step=${s} --task_name="aimed_pubmedbert_gene_att_ll"
 ```
 
 For the PPI task, we are using 10 fold cross-validation, but for DDI and ChemProt, we do not have to do this.
