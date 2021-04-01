@@ -40,6 +40,10 @@ $BERT_DIR is the path where we store the pre-trained BERT model using sub-domain
 $RE_DIR is the path where we have the evaluation set;\
 $OUTPUT_DIR is the path where we can store the fine-tuned BERT model;
 ```
+TASK_NAME="aimed"
+RE_DIR="./REdata/aimed/"
+BIOBERT_DIR="./pubmedbert_chemprot"
+OUTPUT_DIR="./REoutput/aimed_pubmedbert_att_ll_chemprot"
 for i in {1..10}
 do
 	python run_re.py --task_name=$TASK_NAME --do_train=true --do_eval=false --do_predict=true --vocab_file=$BIOBERT_DIR/vocab.txt --bert_config_file=$BERT_DIR/bert_config.json --init_checkpoint=$BERT_DIR/model.ckpt-10000 --max_seq_length=128 --train_batch_size=16 --learning_rate=2e-5 --num_train_epochs=${s} --do_lower_case=false --data_dir=${RE_DIR}${i} --output_dir=${OUTPUT_DIR}${i} 
