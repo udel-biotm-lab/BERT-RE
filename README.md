@@ -22,15 +22,9 @@ done
 After the creation of tfrecord files for BERT model, we then can run pre-training (here we use Google Cloud TPU): 
 ```
 STORAGE_BUCKET=gs://subbert_file
-#mlm+nsp
 BERT_BASE_DIR=$STORAGE_BUCKET/pubmedbert
-
 output_dir=$STORAGE_BUCKET/pubmedbert_gene
 pretraining_file=$STORAGE_BUCKET/data/gene_protein_sentence_nltk_wwm
-BERT_BASE_DIR="./pubmedbert"
-output_dir="./pubmedbert_gene"
-pretraining_file="./data/gene_protein_sentence_nltk_wwm"
-
 
 python3 run_pretraining.py  --input_file=${pretraining_file}1.tfrecord  --output_dir=${output_dir}  --do_train=True --do_eval=True --bert_config_file=${BERT_BASE_DIR}/bert_config.json --init_checkpoint=$BERT_BASE_DIR/model.ckpt --train_batch_size=192  --max_seq_length=128 --max_predictions_per_seq=20 --num_train_steps=10000 --num_warmup_steps=10  --learning_rate=2e-5 --use_tpu=True --tpu_name=subbert
 
