@@ -8,6 +8,8 @@
 [DDI](https://drive.google.com/file/d/1f03yS_hTY5-lGR4N9siDYjalAeZrler8/view?usp=sharing)\
 [ChemProt](https://drive.google.com/file/d/1KitpphP5B9wKN01NoiKg65z11vckeoka/view?usp=sharing)
 
+Due to the memory limit, we split the pre-training data into 10 files during sub-domain pre-training. If enough memory is available for you, just combine all the files into one file.
+
 ```
 #!/usr/bin/env bash
 
