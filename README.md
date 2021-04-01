@@ -21,6 +21,12 @@ done
 ```
 After the creation of tfrecord files for BERT model, we then can run pre-training (here we use Google Cloud TPU): 
 ```
+STORAGE_BUCKET=gs://subbert_file
+#mlm+nsp
+BERT_BASE_DIR=$STORAGE_BUCKET/pubmedbert
+
+output_dir=$STORAGE_BUCKET/pubmedbert_gene
+pretraining_file=$STORAGE_BUCKET/data/gene_protein_sentence_nltk_wwm
 BERT_BASE_DIR="./pubmedbert"
 output_dir="./pubmedbert_gene"
 pretraining_file="./data/gene_protein_sentence_nltk_wwm"
