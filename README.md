@@ -52,7 +52,7 @@ do
 done
 python ./biocodes/re_eval.py --output_path=${OUTPUT_DIR} --answer_path=${RE_DIR} --fold_number=10 --step=${s} --task_name="aimed_pubmedbert_gene"
 ```
-
+### 4. New fine-tuning of BERT model:
 For the new fine-tuning mechanism of BERT model, just set "model_name" to "attention_last_layer" or "bilstm_last_layer" or ""lstm_last_layer""
 ```
 TASK_NAME="aimed"
