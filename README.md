@@ -11,7 +11,21 @@
 Due to the memory limit, we split the pre-training data into 10 files during sub-domain pre-training. If enough memory is available for you, just combine all the files into one file.
 
 ```
-#!/usr/bin/env bash
+BERT_BASE_DIR="./pubmedbert"
+output_dir="./pubmedbert_gene"
+pretraining_file="./data/gene_protein_sentence_nltk_wwm"
+
+
+#python run_pretraining.py  --input_file=${pretraining_file}1.tfrecord  --output_dir=${output_dir}  --do_train=True --do_eval=True --bert_config_file=${BERT_BASE_DIR}/bert_config.json --init_checkpoint=$BERT_BASE_DIR/model.ckpt-1000000 --train_batch_size=16  --max_seq_length=128 --max_predictions_per_seq=20 --num_train_steps=10000 --num_warmup_steps=10  --learning_rate=2e-5
+
+for i in {1..10}
+do
+	ls ${output_dir}
+	python create_pretraining_data.py --input_file=./data/gene_protein_sentence_nltk${i}.txt  --output_file=./data/gene_protein_sentence_nltk_wwm${i}.tfrecord  --vocab_file='./pubmedbert/vocab.txt'  --do_lower_case=true --do_whole_word_mask=true  --max_seq_length=128  --max_predictions_per_seq=20   --masked_lm_prob=0.15  --random_seed=12345  --dupe_factor=5
+
+	#python run_pretraining.py  --input_file=${pretraining_file}$((${i}+1)).tfrecord  --output_dir=$output_dir  --do_train=True --do_eval=True --bert_config_file=$BERT_BASE_DIR/bert_config.json --init_checkpoint=${output_dir}/model.ckpt-${i}0000 --train_batch_size=16  --max_seq_length=128 --max_predictions_per_seq=20 --num_train_steps=$((${i}+1))0000 --num_warmup_steps=10  --learning_rate=2e-5
+
+done
 
 STORAGE_BUCKET=gs://subbert_file
 #mlm+nsp
