@@ -502,6 +502,58 @@ class BioBERTChemprotProcessor(DataProcessor):
           InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
     return examples
 
+class BioBERTDrugProtProcessor(DataProcessor):
+    """Processor for the BioBERT data set (GLUE version)."""
+
+    def get_train_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "train.tsv")), "train")
+
+    def get_dev_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "dev.tsv")), "dev")
+
+    def get_test_examples(self, data_dir):
+        """See base class."""
+        return self._create_examples(
+            self._read_tsv(os.path.join(data_dir, "test.tsv")), "test")
+
+    def get_labels(self):
+        """See base class."""
+        return ["ACTIVATOR",
+                "AGONIST",
+                "AGONIST-ACTIVATOR",
+                "AGONIST-INHIBITOR",
+                "ANTAGONIST",
+                "DIRECT-REGULATOR",
+                "INDIRECT-DOWNREGULATOR",
+                "INDIRECT-UPREGULATOR",
+                "INHIBITOR",
+                "PART-OF",
+                "PRODUCT-OF",
+                "SUBSTRATE",
+                "SUBSTRATE_PRODUCT-OF",
+                "False"]
+
+    def _create_examples(self, lines, set_type):
+        """Creates examples for the training and dev sets."""
+        examples = []
+        for (i, line) in enumerate(lines):
+            # Only the test set has a header
+            if i == 0:
+                continue
+            guid = "%s-%s" % (set_type, i)
+            if set_type == "test":
+                text_a = tokenization.convert_to_unicode(line[1])
+                label = tokenization.convert_to_unicode(line[2])
+            else:
+                text_a = tokenization.convert_to_unicode(line[1])
+                label = tokenization.convert_to_unicode(line[2])
+            examples.append(
+                InputExample(guid=guid, text_a=text_a, text_b=None, label=label))
+        return examples
 
 class ColaProcessor(DataProcessor):
   """Processor for the CoLA data set (GLUE version)."""
@@ -1866,6 +1918,7 @@ def main(_):
       "mirnadisease": BioBERTProcessor,
       "euadr": BioBERTProcessor,
       "chemprot": BioBERTChemprotProcessor,
+      "drugprot": BioBERTDrugProtProcessor,
       "ddi13": BioBERTDDIProcessor,
       "aimed": BioBERTProcessor,
   }
@@ -2030,7 +2083,7 @@ def main(_):
 
     result = estimator.evaluate(input_fn=eval_input_fn, steps=eval_steps)
 
-    output_eval_file = os.path.join(FLAGS.output_dir, "eval_results.txt")
+    output_eval_file = os.path.join(FLAGS.output_dir, "eval_results_epoch_"+str(FLAGS.num_train_epochs)+".txt")
     with tf.gfile.GFile(output_eval_file, "w") as writer:
       tf.logging.info("***** Eval results *****")
       for key in sorted(result.keys()):

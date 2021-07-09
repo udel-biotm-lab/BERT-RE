@@ -60,7 +60,7 @@ for fi in range(1,args.fold_number+1):
 # chemprot
 # micro-average of 5 target classes
 # see "Potent pairing: ensemble of long short-term memory networks and support vector machine for chemical-protein relation extraction (Mehryary, 2018)" for details
-if args.task == "DDI" or args.task == "ChemProt":
+if args.task == "DDI" or args.task == "ChemProt" or args.task == "DrugProt":
     testdf = pd.read_csv(args.answer_path+'test.tsv', sep="\t", index_col=0)
     preddf = pd.read_csv(args.output_path+'test_results.tsv', sep="\t", header=None)
 
@@ -94,7 +94,32 @@ if args.task == "DDI" or args.task == "ChemProt":
         results["f1 score"] = f
         results["recall"] = r
         results["precision"] = p
+    elif args.task == "DrugProt":
+        label_list=["ACTIVATOR",
+                    "AGONIST",
+                    "AGONIST-ACTIVATOR",
+                    "AGONIST-INHIBITOR",
+                    "ANTAGONIST",
+                    "DIRECT-REGULATOR",
+                    "INDIRECT-DOWNREGULATOR",
+                    "INDIRECT-UPREGULATOR",
+                    "INHIBITOR",
+                    "PART-OF",
+                    "PRODUCT-OF",
+                    "SUBSTRATE",
+                    "SUBSTRATE_PRODUCT-OF",
+                    "False"]
+        str_to_int_mapper = dict()
+        for i,v in enumerate(label_list):
+            str_to_int_mapper[v] = i
+        test_answer = [str_to_int_mapper[v] for v in testdf["label"]]
 
+
+        p,r,f,s = sklearn.metrics.precision_recall_fscore_support(y_pred=pred_class, y_true=test_answer, labels=list(range(len(label_list)-1)), average="micro")
+        results = dict()
+        results["f1 score"] = f
+        results["recall"] = r
+        results["precision"] =p
 output_results=args.task_name+'_results_'+args.step+'.txt'
 
 if args.fold_number==0:
