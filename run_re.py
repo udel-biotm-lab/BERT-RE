@@ -24,6 +24,7 @@ import os
 import modeling
 import optimization
 import tokenization
+import tf_metrics
 import tensorflow as tf
 from tensorflow.core.protobuf import rewriter_config_pb2
 flags = tf.flags
@@ -1749,9 +1750,15 @@ def model_fn_builder(bert_config, num_labels, init_checkpoint, learning_rate,
         accuracy = tf.metrics.accuracy(
             labels=label_ids, predictions=predictions, weights=is_real_example)
         loss = tf.metrics.mean(values=per_example_loss, weights=is_real_example)
+        precision = tf_metrics.precision(label_ids, predictions, num_labels, list(range(num_labels-1)), average="micro")
+        recall = tf_metrics.recall(label_ids, predictions, num_labels, list(range(num_labels-1)), average="micro")
+        f = tf_metrics.f1(label_ids, predictions, num_labels, list(range(num_labels-1)), average="micro")
         return {
             "eval_accuracy": accuracy,
             "eval_loss": loss,
+            "eval_precision":precision,
+            "eval_recall":recall,
+            "eval_f":f,
         }
 
       eval_metrics = (metric_fn,
